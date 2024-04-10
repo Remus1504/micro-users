@@ -3,7 +3,10 @@ import {
   createInstructor,
   getInstructorByEmail,
 } from '../../Services/instructor.service';
-import { BadRequestError, InstructorDocument } from '@remus1504/micrograde';
+import {
+  BadRequestError,
+  InstructorDocument,
+} from '@remus1504/micrograde-shared';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -42,9 +45,11 @@ const Instructor = async (req: Request, res: Response): Promise<void> => {
   };
   const createdInstructor: InstructorDocument =
     await createInstructor(Instructor);
+  console.log('HIT');
+  console.log(createdInstructor);
   res.status(StatusCodes.CREATED).json({
     message: 'Instructor created successfully.',
-    Instructor: createdInstructor,
+    instructor: createdInstructor,
   });
 };
 

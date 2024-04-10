@@ -1,4 +1,4 @@
-import { winstonLogger } from '@remus1504/micrograde';
+import { winstonLogger } from '@remus1504/micrograde-shared';
 import { Logger } from 'winston';
 import { config } from './configuration';
 import mongoose from 'mongoose';

@@ -2,7 +2,7 @@ import {
   getStudentByEmail,
   getStudentByUsername,
 } from '../../Services/student.service';
-import { studentDocument } from '@remus1504/micrograde';
+import { studentDocument } from '@remus1504/micrograde-shared';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 

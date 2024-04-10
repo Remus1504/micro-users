@@ -3,31 +3,35 @@ import {
   getRandomInstructors,
   getInstructorByUsername,
 } from '../../Services/instructor.service';
-import { InstructorDocument } from '@remus1504/micrograde';
+import { InstructorDocument } from '@remus1504/micrograde-shared';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 const id = async (req: Request, res: Response): Promise<void> => {
-  const seller: InstructorDocument | null = await getInstructorById(
-    req.params.sellerId,
+  const instructor: InstructorDocument | null = await getInstructorById(
+    req.params.instructorId,
   );
-  res.status(StatusCodes.OK).json({ message: 'Instructor profile', seller });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: 'Instructor profile', instructor });
 };
 
 const username = async (req: Request, res: Response): Promise<void> => {
-  const seller: InstructorDocument | null = await getInstructorByUsername(
+  const instructor: InstructorDocument | null = await getInstructorByUsername(
     req.params.username,
   );
-  res.status(StatusCodes.OK).json({ message: 'Instructor profile', seller });
+  res
+    .status(StatusCodes.OK)
+    .json({ message: 'Instructor profile', instructor });
 };
 
 const random = async (req: Request, res: Response): Promise<void> => {
-  const sellers: InstructorDocument[] = await getRandomInstructors(
+  const instructors: InstructorDocument[] = await getRandomInstructors(
     parseInt(req.params.size, 10),
   );
   res
     .status(StatusCodes.OK)
-    .json({ message: 'Random Instructor profile', sellers });
+    .json({ message: 'Random Instructor profile', instructors });
 };
 
 export { id, username, random };

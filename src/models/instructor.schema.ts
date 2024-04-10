@@ -1,4 +1,4 @@
-import { InstructorDocument } from '@remus1504/micrograde';
+import { InstructorDocument } from '@remus1504/micrograde-shared';
 import { Model, Schema, model } from 'mongoose';
 
 const InstructorSchema: Schema = new Schema(

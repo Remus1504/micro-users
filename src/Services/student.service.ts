@@ -1,5 +1,5 @@
 import { studentModel } from '../models/student.schema';
-import { studentDocument } from '@remus1504/micrograde';
+import { studentDocument } from '@remus1504/micrograde-shared';
 
 const getStudentByEmail = async (
   email: string,
@@ -60,15 +60,15 @@ const updateStudentEnrolledInCourseProp = async (
   await studentModel
     .updateOne(
       { _id: studentId },
-      type === 'enrolled-courses'
+      type === 'purchased-courses'
         ? {
             $push: {
-              enrolledCourses: enrolledCourseId,
+              purchasedCourses: enrolledCourseId,
             },
           }
         : {
             $pull: {
-              enrolledCourses: enrolledCourseId,
+              purchasedCourses: enrolledCourseId,
             },
           },
     )

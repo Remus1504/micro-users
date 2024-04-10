@@ -1,6 +1,9 @@
 import { InstructorSchema } from '../../Schemas/instructor.schemea';
 import { updateInstructor } from '../../Services/instructor.service';
-import { BadRequestError, InstructorDocument } from '@remus1504/micrograde';
+import {
+  BadRequestError,
+  InstructorDocument,
+} from '@remus1504/micrograde-shared';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
@@ -9,7 +12,7 @@ const instructor = async (req: Request, res: Response): Promise<void> => {
   if (error?.details) {
     throw new BadRequestError(
       error.details[0].message,
-      'Update seller() method error',
+      'Update instructor() method error',
     );
   }
   const instructor: InstructorDocument = {
@@ -28,15 +31,13 @@ const instructor = async (req: Request, res: Response): Promise<void> => {
     certificates: req.body.certificates,
   };
   const updatedInstructor: InstructorDocument = await updateInstructor(
-    req.params.sellerId,
+    req.params.instructorId,
     instructor,
   );
-  res
-    .status(StatusCodes.OK)
-    .json({
-      message: 'Seller created successfully.',
-      instructor: updatedInstructor,
-    });
+  res.status(StatusCodes.OK).json({
+    message: 'Instructor created successfully.',
+    instructor: updatedInstructor,
+  });
 };
 
 export { instructor };

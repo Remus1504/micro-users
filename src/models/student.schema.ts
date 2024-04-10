@@ -1,4 +1,4 @@
-import { studentDocument } from '@remus1504/micrograde';
+import { studentDocument } from '@remus1504/micrograde-shared';
 import mongoose, { Model, Schema, model } from 'mongoose';
 
 const StudentSchema: Schema = new Schema(

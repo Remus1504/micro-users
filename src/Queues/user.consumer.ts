@@ -1,12 +1,12 @@
-import { config } from '../src/configuration';
+import { config } from '../configuration';
 import {
   InstructorDocument,
   studentDocument,
   winstonLogger,
-} from '@remus1504/micrograde';
+} from '@remus1504/micrograde-shared';
 import { Channel, ConsumeMessage, Replies } from 'amqplib';
 import { Logger } from 'winston';
-import { createConnection } from '../Queues/connection';
+import { createConnection } from './connection';
 import {
   createStudent,
   updateStudentEnrolledInCourseProp,
@@ -19,7 +19,7 @@ import {
   updateInstructorReview,
   updateInstructorCancelledJobsProp,
 } from '../Services/instructor.service';
-import { publishDirectMessage } from '../Queues/user.producer';
+import { publishDirectMessage } from './user.producer';
 
 const log: Logger = winstonLogger(
   `${config.ELASTIC_SEARCH_ENDPOINT}`,
@@ -53,17 +53,17 @@ const consumeStudentDirectMessage = async (channel: Channel): Promise<void> => {
             email,
             profilePicture,
             country,
-            enrolledCourses: [],
+            purchasedCourses: [],
             createdAt,
           }; // subscribing to the queue to cosume the message returned
           await createStudent(student);
         } else {
-          const { InstructorId, enrolledCourses } = JSON.parse(
+          const { InstructorId, purchasedCourses } = JSON.parse(
             msg!.content.toString(),
           );
           await updateStudentEnrolledInCourseProp(
             InstructorId,
-            enrolledCourses,
+            purchasedCourses,
             type,
           );
         }
@@ -101,26 +101,26 @@ const consumeInstructorDirectMessage = async (
         const {
           type,
           instructorId,
-          ongoingJobs,
-          completedJobs,
+          onGoingTasks,
+          completedTasks,
           totalEarnings,
           recentDelivery,
-          gigSellerId,
+          courseInstructorId,
           count,
         } = JSON.parse(msg!.content.toString());
-        if (type === 'create-order') {
-          await updateInstructorOngoingJobsProp(instructorId, ongoingJobs);
-        } else if (type === 'approve-order') {
+        if (type === 'create-enrolment') {
+          await updateInstructorOngoingJobsProp(instructorId, onGoingTasks);
+        } else if (type === 'approve-enrolment') {
           await updateInstructorCompletedJobsProp({
             instructorId,
-            ongoingJobs,
-            completedJobs,
+            onGoingTasks,
+            completedTasks,
             totalEarnings,
             recentDelivery,
           });
         } else if (type === 'update-course-count') {
-          await updateTotalCourseCount(`${gigSellerId}`, count);
-        } else if (type === 'cancel-order') {
+          await updateTotalCourseCount(`${courseInstructorId}`, count);
+        } else if (type === 'cancel-enrolment') {
           await updateInstructorCancelledJobsProp(instructorId);
         }
         channel.ack(msg!);
@@ -129,7 +129,7 @@ const consumeInstructorDirectMessage = async (
   } catch (error) {
     log.log(
       'error',
-      'UsersService UserConsumer consumeSellerDirectMessage() method error:',
+      'UsersService UserConsumer consumeInstructorDirectMessage() method error:',
       error,
     );
   }
@@ -185,7 +185,7 @@ const consumeSeedCourseDirectMessages = async (
       channel = (await createConnection()) as Channel;
     }
     const exchangeName = 'micrograde-course';
-    const routingKey = 'get-instructrors';
+    const routingKey = 'get-instructors';
     const queueName = 'user-course-queue';
     await channel.assertExchange(exchangeName, 'direct');
     const microGradeQueue: Replies.AssertQueue = await channel.assertQueue(
@@ -197,7 +197,7 @@ const consumeSeedCourseDirectMessages = async (
       microGradeQueue.queue,
       async (msg: ConsumeMessage | null) => {
         const { type } = JSON.parse(msg!.content.toString());
-        if (type === 'getinstructors') {
+        if (type === 'getInstructors') {
           const { count } = JSON.parse(msg!.content.toString());
           const instructors: InstructorDocument[] = await getRandomInstructors(
             parseInt(count, 10),

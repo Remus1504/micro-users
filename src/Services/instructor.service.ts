@@ -1,12 +1,12 @@
 import { InstructorModel } from '../models/instructor.schema';
 import {
-  IOrderMessage,
+  IEnrolmentMessage,
   IRatingTypes,
   IReviewMessageDetails,
   InstructorDocument,
-} from '@remus1504/micrograde';
+} from '@remus1504/micrograde-shared';
 import mongoose from 'mongoose';
-import { updateStudentIsInstructorProp } from '../Services/student.service';
+import { updateStudentIsInstructorProp } from './student.service';
 
 const getInstructorById = async (
   instructorId: string,
@@ -95,11 +95,11 @@ const updateTotalCourseCount = async (
 
 const updateInstructorOngoingJobsProp = async (
   instructorId: string,
-  ongoingJobs: number,
+  onGoingTasks: number,
 ): Promise<void> => {
   await InstructorModel.updateOne(
     { _id: instructorId },
-    { $inc: { ongoingJobs } },
+    { $inc: { onGoingTasks } },
   ).exec();
 };
 
@@ -108,17 +108,17 @@ const updateInstructorCancelledJobsProp = async (
 ): Promise<void> => {
   await InstructorModel.updateOne(
     { _id: instructorId },
-    { $inc: { ongoingJobs: -1, cancelledJobs: 1 } },
+    { $inc: { onGoingTasks: -1, cancelledTasks: 1 } },
   ).exec();
 };
 
 const updateInstructorCompletedJobsProp = async (
-  data: IOrderMessage,
+  data: IEnrolmentMessage,
 ): Promise<void> => {
   const {
     instructorId,
-    ongoingJobs,
-    completedJobs,
+    onGoingTasks,
+    completedTasks,
     totalEarnings,
     recentDelivery,
   } = data;
@@ -126,8 +126,8 @@ const updateInstructorCompletedJobsProp = async (
     { _id: instructorId },
     {
       $inc: {
-        ongoingJobs,
-        completedJobs,
+        onGoingTasks,
+        completedTasks,
         totalEarnings,
       },
       $set: { recentDelivery: new Date(recentDelivery!) },

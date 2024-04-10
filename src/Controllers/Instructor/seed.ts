@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker';
 import {
   BadRequestError,
-  StudentDocument,
+  studentDocument,
   IEducation,
   IExperience,
   InstructorDocument,
-} from '@remus1504/micrograde';
+} from '@remus1504/micrograde-shared';
 import { floor, random, sample, sampleSize } from 'lodash';
 import { Request, Response } from 'express';
 import { getRandomStudents } from '../../Services/student.service';
@@ -18,37 +18,37 @@ import { StatusCodes } from 'http-status-codes';
 
 const seed = async (req: Request, res: Response): Promise<void> => {
   const { count } = req.params;
-  const buyers: StudentDocument[] = await getRandomStudents(
+  const students: studentDocument[] = await getRandomStudents(
     parseInt(count, 10),
   );
-  for (let i = 0; i < buyers.length; i++) {
-    const buyer: StudentDocument = buyers[i];
-    const checkIfSellerExist: InstructorDocument | null =
-      await getInstructorByEmail(`${buyer.email}`);
-    if (checkIfSellerExist) {
+  for (let i = 0; i < students.length; i++) {
+    const student: studentDocument = students[i];
+    const checkIfInstructorExist: InstructorDocument | null =
+      await getInstructorByEmail(`${student.email}`);
+    if (checkIfInstructorExist) {
       throw new BadRequestError(
-        'Seller already exist.',
-        'SellerSeed seller() method error',
+        'Instructor already exist.',
+        'InstructorSeed instructor() method error',
       );
     }
     const basicDescription: string = faker.commerce.productDescription();
     const skills: string[] = [
-      'Programming',
-      'Web development',
-      'Mobile development',
-      'Proof reading',
-      'UI/UX',
-      'Data Science',
-      'Financial modeling',
-      'Data analysis',
+      'Mathematics',
+      'Chemistry',
+      'Computer Science',
+      'Chemsistry',
+      'Geography',
+      'Business',
+      'Music',
+      'Religious Education',
     ];
-    const seller: InstructorDocument = {
+    const instructor: InstructorDocument = {
       profilePublicId: uuidv4(),
       fullName: faker.person.fullName(),
-      username: buyer.username,
-      email: buyer.email,
+      username: student.username,
+      email: student.email,
       country: faker.location.country(),
-      profilePicture: buyer.profilePicture,
+      profilePicture: student.profilePicture,
       description:
         basicDescription.length <= 250
           ? basicDescription
@@ -90,11 +90,11 @@ const seed = async (req: Request, res: Response): Promise<void> => {
         },
       ],
     };
-    await createInstructor(seller);
+    await createInstructor(instructor);
   }
   res
     .status(StatusCodes.CREATED)
-    .json({ message: 'Sellers created successfully' });
+    .json({ message: 'Instructors created successfully' });
 };
 
 const randomExperiences = (count: number): IExperience[] => {

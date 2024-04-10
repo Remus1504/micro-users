@@ -17,7 +17,7 @@ const InstructorSchema: ObjectSchema = Joi.object().keys({
     'any.required': 'Profile picture is required',
   }),
   description: Joi.string().required().messages({
-    'string.base': 'Please add a seller description',
+    'string.base': 'Please add a instructor description',
     'string.empty': 'Instructor description is required',
     'any.required': 'Instructor description is required',
   }),

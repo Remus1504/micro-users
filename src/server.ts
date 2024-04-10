@@ -5,7 +5,7 @@ import {
   IAuthPayload,
   IErrorResponse,
   winstonLogger,
-} from '@remus1504/micrograde';
+} from '@remus1504/micrograde-shared';
 import { Logger } from 'winston';
 import { config } from './configuration';
 import {
@@ -28,9 +28,9 @@ import {
   consumeReviewFanoutMessages,
   consumeSeedCourseDirectMessages,
   consumeStudentDirectMessage,
-} from 'Queues/user.consumer';
+} from '@users/Queues/user.consumer';
 import { Channel } from 'amqplib';
-import { createConnection } from 'Queues/connection';
+import { createConnection } from '@users/Queues/connection';
 
 const NEW_SERVER_PORT = 4003;
 const newLogger: Logger = winstonLogger(
